@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.1.0</version>
+    <relativePath />
+  </parent>
+
+  <groupId>io.sckw.common.starter</groupId>
+  <artifactId>common-starter-parent</artifactId>
+  <version>${revision}${sha1}${changelist}</version>
+  <packaging>pom</packaging>
+  <name>common-starter-parent</name>
+  <description>Common Spring Boot Parent</description>
+
+  <properties>
+    <revision>1.0.0</revision>       <!-- MAJOR.MINOR.PATCH -->
+    <sha1>-1</sha1>                    <!-- ReleaseCandidate  -->
+    <changelist>-SNAPSHOT</changelist>        <!-- -SNAPSHOT or ""   -->
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>17</java.version> <!-- Override springboot-starter declared Java Version -->
+
+    <lombok.version>1.18.28</lombok.version>
+
+    <spring-boot.version>3.1.0</spring-boot.version>
+    <spring-cloud.version>2022.0.3</spring-cloud.version> <!-- paired with spring.boot.version -->
+    <mq-jms-spring.version>3.1.0</mq-jms-spring.version>
+
+    <springdoc.version>2.1.0</springdoc.version>
+    <io-swagger.version>2.2.10</io-swagger.version>
+    <!-- swagger version highly coupled with springdoc version -->
+    <shedlock.version>5.3.0</shedlock.version>
+
+    <equalsverifier.version>3.14.1</equalsverifier.version>
+
+    <squareup-okhttp3.version>4.11.0</squareup-okhttp3.version>
+    <testcontainers.version>1.18.1</testcontainers.version>
+    <logcaptor.version>2.9.0</logcaptor.version>
+
+    <common-code-checkstyle.version>1.0.0</common-code-checkstyle.version>
+    <common-code-pmd.version>1.0.0</common-code-pmd.version>
+
+    <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
+
+    <!-- build artifact and order in Jenkins -->
+    <!--
+    <buildorders>
+      <buildorder>common-code-parent</buildorder>
+      <buildorder>common-code-checkstyle</buildorder>
+      <buildorder>common-code-pmd</buildorder>
+      <buildorder>common-starter-parent</buildorder>
+    </buildorders>
+    -->
+
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.swagger.core.v3</groupId>
+        <artifactId>swagger-annotations</artifactId>
+        <version>${io-swagger.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-common</artifactId>
+        <version>${springdoc.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-ui</artifactId>
+        <version>${springdoc.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-webflux-ui</artifactId>
+        <version>${springdoc.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-data-rest</artifactId>
+        <version>${springdoc.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-rest</artifactId>
+        <version>${spring-boot.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.ibm.mq</groupId>
+        <artifactId>mq-jms-spring-boot-starter</artifactId>
+        <version>${mq-jms-spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.javacrumbs.shedlock</groupId>
+        <artifactId>shedlock-spring</artifactId>
+        <version>${shedlock.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.javacrumbs.shedlock</groupId>
+        <artifactId>shedlock-provider-mongo</artifactId>
+        <version>${shedlock.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>nl.jqno.equalsverifier</groupId>
+        <artifactId>equalsverifier</artifactId>
+        <version>${equalsverifier.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>okhttp</artifactId>
+        <version>${squareup-okhttp3.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>mockwebserver</artifactId>
+        <version>${squareup-okhttp3.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>testcontainers</artifactId>
+        <version>${testcontainers.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>${testcontainers.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>mongodb</artifactId>
+        <version>${testcontainers.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.hakky54</groupId>
+        <artifactId>logcaptor</artifactId>
+        <version>${logcaptor.version}</version>
+      </dependency>
+    </dependencies>
+
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>flatten-maven-plugin</artifactId>
+          <version>${flatten-maven-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <configuration>
+          <updatePomFile>true</updatePomFile>
+          <flattenMode>resolveCiFriendliesOnly</flattenMode>
+        </configuration>
+        <executions>
+          <execution>
+            <id>flatten</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>flatten.clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
