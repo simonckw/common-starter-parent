@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.sckw.common</groupId>
+    <artifactId>common-dependencies</artifactId>
+    <version>1.0.0-1-SNAPSHOT</version>
+    <relativePath />
+  </parent>
+
+  <groupId>io.sckw.common</groupId>
+  <artifactId>common-starter-parent</artifactId>
+  <version>${revision}${sha1}${changelist}</version>
+  <packaging>pom</packaging>
+  <name>common-starter-parent</name>
+  <description>Common Starter Parent for Spring Boot Applications</description>
+
+  <properties>
+    <revision>1.0.0</revision>             <!-- major.minor.patch -->
+    <sha1>-1</sha1>                        <!-- release candidate -->
+    <changelist>-SNAPSHOT</changelist>     <!-- -SNAPSHOT or ""   -->
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>17</java.version>
+
+    <common-code-checkstyle.version>1.0.0</common-code-checkstyle.version>
+    <common-code-pmd.version>1.0.0</common-code-pmd.version>
+
+    <maven-checkstyle-plugin.version>3.3.0</maven-checkstyle-plugin.version>
+    <maven-pmd-plugin.version>3.21.0</maven-pmd-plugin.version>
+    <checkstyle.version>10.12.3</checkstyle.version>
+    <ow2-asm.version>9.5</ow2-asm.version>
+
+    <build-helper-maven-plugin.version>3.4.0</build-helper-maven-plugin.version>
+    <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+    <maven-site-plugin.version>3.12.1</maven-site-plugin.version>
+    <maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
+    <maven-project-info-report-plugin.version>3.4.5</maven-project-info-report-plugin.version>
+    <maven-exec-plugin.version>3.1.0</maven-exec-plugin.version>
+
+    <maven-surefire-report-plugin.version>3.1.2</maven-surefire-report-plugin.version>
+    <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
+
+  </properties>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <exclude>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+              </exclude>
+            </excludes>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>build-info</goal>
+              </goals>
+              <configuration>
+                <additionalProperties>
+                  <encoding.source>${project.build.sourceEncoding}</encoding.source>
+                  <encoding.reporting>${project.build.sourceEncoding}</encoding.reporting>
+                  <java.source>${maven.compiler.source}</java.source>
+                  <java.target>${maven.compiler.target}</java.target>
+                </additionalProperties>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>${maven-checkstyle-plugin.version}</version>
+          <executions>
+            <execution>
+              <!-- for removing 'Plugin execution not covered by lifecycle configuration' -->
+              <!-- but flatten-maven-plugin does not preserve it in flattened-pom -->
+              <!-- https://github.com/mojohaus/flatten-maven-plugin/issues/184 -->
+              <?m2e ignore?>
+              <phase>compile</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+          <dependencies>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>${checkstyle.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>io.sckw.common.code</groupId>
+              <artifactId>common-code-checkstyle</artifactId>
+              <version>${common-code-checkstyle.version}</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <configLocation>checkstyle-config.xml</configLocation>
+            <violationSeverity>warning</violationSeverity>
+            <failOnViolation>true</failOnViolation>
+            <includeTestSourceDirectory>false</includeTestSourceDirectory>
+            <sourceDirectories>
+              <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+            </sourceDirectories>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-pmd-plugin</artifactId>
+          <version>${maven-pmd-plugin.version}</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.ow2.asm</groupId>
+              <artifactId>asm</artifactId>
+              <version>${ow2-asm.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>io.sckw.common.code</groupId>
+              <artifactId>common-code-pmd</artifactId>
+              <version>${common-code-pmd.version}</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <linkXRef>false</linkXRef>
+            <rulesets>
+              <ruleset>maven.xml</ruleset>
+              <ruleset>pmd-exclude.xml</ruleset>
+              <ruleset>pmd-include.xml</ruleset>
+            </rulesets>
+          </configuration>
+          <executions>
+            <execution>
+              <!-- for removing 'Plugin execution not covered by lifecycle configuration' -->
+              <!-- but flatten-maven-plugin does not preserve it in flattened-pom -->
+              <!-- https://github.com/mojohaus/flatten-maven-plugin/issues/184 -->
+              <?m2e ignore?>
+              <phase>compile</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>${build-helper-maven-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>parse-version</id>
+              <goals>
+                <goal>parse-version</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>released-version</id>
+              <goals>
+                <goal>released-version</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${maven-source-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>${maven-site-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${maven-dependency-plugin.version}</version>
+          <executions>
+            <execution>
+              <!-- for removing 'Plugin execution not covered by lifecycle configuration' -->
+              <!-- but flatten-maven-plugin does not preserve it in flattened-pom -->
+              <!-- https://github.com/mojohaus/flatten-maven-plugin/issues/184 -->
+              <?m2e ignore?>
+              <id>download-sources</id>
+              <configuration>
+                <includeScope>runtime</includeScope>
+                <includeGroupIds>io.sckw.*</includeGroupIds>
+                <silent>true</silent>
+              </configuration>
+              <goals>
+                <goal>sources</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>list</id>
+              <phase>pre-site</phase>
+              <goals>
+                <goal>list</goal>
+              </goals>
+              <configuration>
+                <outputFile>${project.build.directory}/site/resources/dependency-list</outputFile>
+              </configuration>
+            </execution>
+            <execution>
+              <id>tree</id>
+              <phase>pre-site</phase>
+              <goals>
+                <goal>tree</goal>
+              </goals>
+              <configuration>
+                <outputFile>${project.build.directory}/site/resources/dependency-tree</outputFile>
+              </configuration>
+            </execution>
+            <execution>
+              <id>copy-dependencies</id>
+              <phase>pre-site</phase>
+              <goals>
+                <goal>copy-dependencies</goal>
+              </goals>
+              <configuration>
+                <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
+                <overWriteReleases>false</overWriteReleases>
+                <overWriteSnapshots>false</overWriteSnapshots>
+                <overWriteIfNewer>true</overWriteIfNewer>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>${maven-project-info-report-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>${maven-exec-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>jdeps</id>
+              <phase>pre-site</phase>
+              <goals>
+                <goal>exec</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <workingDirectory>${project.build.directory}</workingDirectory>
+            <outputFile>${project.build.directory}/site/resources/dependency-jdeps</outputFile>
+            <executable>jdeps</executable>
+            <arguments>
+              <argument>--class-path=dependencies/*</argument>
+              <argument>--multi-release=17</argument>
+              <argument>-verbose</argument>
+              <argument>${project.build.finalName}.jar</argument>
+            </arguments>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco-maven-plugin.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>report</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <goals>
+          <goal>jdeps</goal>
+        </goals>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <release>${java.version}</release>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+            <path>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-configuration-processor</artifactId>
+              <version>${spring-boot.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
+
+    </plugins>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <configuration>
+          <dataFile>${project.build.directory}/jacoco.exec</dataFile>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>${maven-surefire-report-plugin.version}</version>
+        <configuration>
+          <linkXRef>false</linkXRef>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>report-only</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>${maven-project-info-reports-plugin.version}</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>ci-management</report>
+              <report>dependencies</report>
+              <report>dependency-info</report>
+              <report>index</report>
+              <report>plugins</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <!-- <distributionManagement>
+    <repository>
+      <id>nexus-releases</id>
+      <url>https://nexus.sckw.io:443/repository/maven-releases/</url>
+      <uniqueVersion>false</uniqueVersion>
+    </repository>
+    <snapshotRepository>
+      <id>nexus-snapshots</id>
+      <url>https://nexus.sckw.io:443/repository/maven-snapshots/</url>
+      <uniqueVersion>true</uniqueVersion>
+    </snapshotRepository>
+  </distributionManagement> -->
+
+</project>
